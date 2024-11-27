@@ -16,11 +16,11 @@ jobs:
       - name: Copy HTML to EC2
         uses: appleboy/scp-action@v0.1.3
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.EC2_HOST }}  # Asegúrate de que sea la IP pública de la instancia
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           source: "./index.html"
-          target: "/tmp/index.html"  # Copiar primero a /tmp para evitar permisos
+          target: "/tmp/index.html"  # Usamos /tmp para evitar problemas de permisos
 
       - name: Move HTML file to the correct location
         run: |
