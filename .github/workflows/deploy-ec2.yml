@@ -3,7 +3,7 @@ name: Deploy to EC2 with Nginx
 on:
   push:
     branches:
-      - main  # Cambia a tu rama principal si no es "main"
+      - main
 
 jobs:
   deploy:
@@ -13,24 +13,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Verify index.html
-      run: |
-        if [ ! -f ./index.html ]; then
-          echo "Archivo index.html no encontrado. Creando archivo temporal..."
-          echo "<!DOCTYPE html>
-          <html lang='en'>
-          <head>
-              <meta charset='UTF-8'>
-              <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-              <title>Deploy EC2</title>
-          </head>
-          <body>
-              <h1>¡Despliegue exitoso en EC2!</h1>
-              <p>Este archivo fue generado automáticamente porque no existía en el repositorio.</p>
-          </body>
-          </html>" > index.html
-        fi
-
     - name: Setup SSH Key
       uses: webfactory/ssh-agent@v0.5.3
       with:
@@ -38,5 +20,5 @@ jobs:
 
     - name: Deploy HTML to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -r ./index.html ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }}:/var/www/html/
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }} "sudo systemctl restart nginx"
+        scp -o StrictHostKeyChecking=no -r ./index.html ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }}:/tmp/
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }} "sudo mv /tmp/index.html /var/www/html/ && sudo systemctl restart nginx"
