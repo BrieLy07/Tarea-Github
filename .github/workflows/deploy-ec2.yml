@@ -1,0 +1,24 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # Cambia esto a tu rama principal si no es "main"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH Key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SECRET_KEYS }}
+
+    - name: Deploy HTML to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -r ./index.html ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }}:/var/www/html/
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }} "sudo systemctl restart nginx"
