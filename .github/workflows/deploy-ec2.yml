@@ -1,4 +1,4 @@
-name: Deploy to EC2 with Nginx
+name: Deploy HTML to EC2
 
 on:
   push:
@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup SSH Key
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SECRET_KEYS }}
-
-    - name: Deploy HTML to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -r ./index.html ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }}:/tmp/
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SECRET_USER }}@${{ secrets.SECRET_HOST }} "sudo mv /tmp/index.html /var/www/html/ && sudo systemctl restart nginx"
+      - name: Copy HTML to EC2
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "./index.html"
+          target: "/var/www/html/"
+          command: "sudo mv index.html /var/www/html/"
