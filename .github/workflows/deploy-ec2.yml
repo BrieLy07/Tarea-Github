@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           source: "./index.html"
-          target: "/tmp/index.html"  # Usamos /tmp para evitar problemas de permisos
+          target: "/tmp/index.html"  # Copiar primero a /tmp para evitar permisos
 
       - name: Move HTML file to the correct location
         run: |
